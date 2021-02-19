@@ -41,14 +41,17 @@ $(function () {
 
     gTranslate(texts, destLang).then(function(response) {
       var translations = response.result.data.translations;
-      tbody.find("td.translation textarea").each(function(index) {
+      tbody.find("td.translation").each(function(index) {
+        var newValueArea = $(this).find("textarea");
+        var originalValue = $(this).parent().find("td.original textarea").val();
+
         var value = translations[index].translatedText;
-        if($(this).val().length > 0 ||
-          value.indexOf("% {") > -1 ||
-          value.indexOf("---") > -1) {
+        if(newValueArea.val().length > 0 || // exclude already filled
+          originalValue.indexOf("%{") > -1 || // exclude phrases with variables
+          originalValue.indexOf("---") > -1) { // exclude --- one: ... other: ...
           return true;
         }
-        $(this).val(value);
+        newValueArea.val(value);
       })
     }, function(reason) {
       console.warn('Error: ' + reason.result.error.message);
