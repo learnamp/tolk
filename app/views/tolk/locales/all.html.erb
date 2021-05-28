@@ -9,6 +9,7 @@
 </div>
 
 <%= render :partial => "tolk/locales/gtranslate_all" %>
+<%= render :partial => "tolk/locales/only_simple" %>
 
 <div class="select-tag limit-select">
   Show <%= select_tag :limit, options_for_select([30, 60, 100], selected: @limit), id: "limit_select" %> translations per page

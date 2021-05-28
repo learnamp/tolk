@@ -73,6 +73,8 @@ module Tolk
         keys = data.keys.map(&:to_s)
         keys.all? {|k| PLURALIZATION_KEYS.include?(k) }
       end
+
+
     end
 
     def dump(to = self.locales_config_path, exporter = Tolk::Export)
@@ -83,8 +85,13 @@ module Tolk
       translations.where('tolk_translations.primary_updated' => true).count > 0
     end
 
-    def phrases_with_translation(page = nil, per = nil)
-      find_phrases_with_translations(page, { :'tolk_translations.primary_updated' => false}, per: per)
+    def phrases_with_translation(page = nil, per = nil, only_simple: false)
+      find_phrases_with_translations(
+        page,
+        { :'tolk_translations.primary_updated' => false},
+        per: per,
+        only_simple: only_simple
+      )
     end
 
     def phrases_with_updated_translation(page = nil, per = nil)
@@ -223,8 +230,9 @@ module Tolk
       true
     end
 
-    def find_phrases_with_translations(page, conditions = {}, per: nil)
+    def find_phrases_with_translations(page, conditions = {}, per: nil, only_simple: false)
       result = Tolk::Phrase.where({ :'tolk_translations.locale_id' => self.id }.merge(conditions)).joins(:translations).order('tolk_phrases.key ASC').public_send(pagination_method, page)
+      result = result.only_simple if only_simple
       result = result.per(per) if per
 
       result.each do |phrase|

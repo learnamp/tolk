@@ -11,9 +11,9 @@ module Tolk
     def show
       respond_to do |format|
         format.html do
-          @phrases = @locale.phrases_without_translation(params[pagination_param])
-                            .includes(:translations)
-                            .per(@limit)
+          @phrases = @locale.phrases_without_translation(params[pagination_param]).includes(:translations)
+          @phrases = @phrases.only_simple if @only_simple
+          @phrases = @phrases.per(@limit)
         end
 
         format.atom { @phrases = @locale.phrases_without_translation(params[pagination_param]).per(50) }
@@ -33,7 +33,9 @@ module Tolk
     end
 
     def all
-      @phrases = @locale.phrases_with_translation(params[pagination_param], @limit)
+      @phrases = @locale.phrases_with_translation(
+        params[pagination_param], @limit, only_simple: @only_simple
+      )
     end
 
     def updated
@@ -86,6 +88,7 @@ module Tolk
 
     def set_limit
       @limit = params[:limit] || 30
+      @only_simple = params[:only_simple]
     end
   end
 end
