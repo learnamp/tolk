@@ -23,5 +23,10 @@ module Tolk
     scope :containing_text, lambda { |query|
       where("tolk_phrases.key LIKE ?", "%#{query}%")
     }
+
+    scope :only_simple, lambda {
+      primary_locale = Tolk::Locale.primary_locale.id
+      where(id: Tolk::Translation.simple.where(locale_id: primary_locale).select(:phrase_id))
+    }
   end
 end

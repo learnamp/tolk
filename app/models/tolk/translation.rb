@@ -3,6 +3,11 @@ module Tolk
     self.table_name = "tolk_translations"
 
     scope :containing_text, lambda {|query| where("tolk_translations.text LIKE ?", "%#{query}%") }
+    scope :simple, lambda {
+      where("tolk_translations.text NOT LIKE ?", "%%{%")
+        .where("tolk_translations.text NOT LIKE ?", "%one:%")
+        .where("tolk_translations.text NOT LIKE ?", "%other:%")
+    }
 
     serialize :text
     serialize :previous_text

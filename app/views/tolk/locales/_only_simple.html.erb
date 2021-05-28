@@ -1,0 +1,11 @@
+<div class="simple-switcher-wrapper">
+  <% if @only_simple %>
+    <%= link_to("Show all phrases",
+                locale_path(@locale, limit: @limit),
+                class: "btn btn-info") %>
+  <% else %>
+    <%= link_to("Show only auto-translatable phrases",
+                locale_path(@locale, limit: @limit, only_simple: true),
+                class: "btn btn-info") %>
+  <% end %>
+</div>
