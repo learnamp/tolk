@@ -4,9 +4,10 @@ module Tolk
 
     scope :containing_text, lambda {|query| where("tolk_translations.text LIKE ?", "%#{query}%") }
     scope :simple, lambda {
-      where("tolk_translations.text NOT LIKE ?", "%%{%")
-        .where("tolk_translations.text NOT LIKE ?", "%one:%")
+      where("tolk_translations.text NOT LIKE ?", "%%{%") # exclude ruby interpolation
+        .where("tolk_translations.text NOT LIKE ?", "%one:%") # exclude nested -> auto-translate can't handle that
         .where("tolk_translations.text NOT LIKE ?", "%other:%")
+        .where("tolk_translations.text NOT LIKE ?", "%{{%") # exclude VUE interpolation
     }
 
     serialize :text
